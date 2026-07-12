@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
-  "description": "ZConsole monorepo — the host console plus its mini apps, in one pnpm workspace.",
+  "description": "ZConsole — the host console plus its mini apps, in one workspace.",
   "packageManager": "pnpm@10.21.0",
   "engines": {
     "node": ">=22"
