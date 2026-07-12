@@ -1,0 +1,41 @@
+# This is used in development only (Alchemy is used for production deployments)
+
+name = "zconsole-events-mini-app-dev"
+main = "server/src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "zconsole-events-mini-app-dev-db"
+database_id = "local"
+
+# Durable Object binding
+[[durable_objects.bindings]]
+name = "DURABLE_OBJECT"
+class_name = "Broadcaster"
+script_name = "zconsole-events-mini-app-dev"
+
+# Durable Object migration
+[[migrations]]
+tag = "v1"
+new_classes = ["Broadcaster"]
+
+# Static assets (client build)
+# In dev: Vite serves client at :5173 (this is unused)
+# In production: Alchemy uploads these assets to Workers
+# [site]
+# bucket = "./client/dist"
+
+# Secrets required by the Worker.
+# In local dev, wrangler loads ONLY these keys from `.env` into the Worker env
+# (c.env) — keeping deploy/infra creds (ALCHEMY_STATE_TOKEN, CLOUDFLARE_ACCOUNT_ID,
+# ALCHEMY_STAGE) out of the app runtime. Missing keys log a warning. In production
+# the value comes from the Cloudflare Secrets Store (see alchemy.run.ts / docs/secrets.md).
+[secrets]
+required = ["GCAL_ICS_URL"]
+
+# Dev server configuration
+[dev]
+port = 8788

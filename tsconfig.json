@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./apps/console" },
+    { "path": "./apps/events" },
+    { "path": "./apps/party-pics" }
+  ]
+}

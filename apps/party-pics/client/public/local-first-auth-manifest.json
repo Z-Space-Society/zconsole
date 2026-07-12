@@ -1,0 +1,9 @@
+{
+  "name": "Photos",
+  "description": "Photos for your events",
+  "icon": "./icon.webp",
+  "type": "app",
+  "permissions": [
+    "profile"
+  ]
+}

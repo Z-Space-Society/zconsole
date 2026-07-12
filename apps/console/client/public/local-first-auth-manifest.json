@@ -1,0 +1,7 @@
+{
+  "name": "Mini Apps",
+  "description": "A directory of mini apps for you and your friends",
+  "icon": "./icon.webp",
+  "type": "app",
+  "permissions": []
+}

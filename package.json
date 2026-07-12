@@ -1,0 +1,26 @@
+{
+  "name": "zconsole",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "ZConsole monorepo — the host console plus its mini apps, in one pnpm workspace.",
+  "packageManager": "pnpm@10.21.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "new-app": "tsx scripts/new-app.ts",
+    "dev:console": "pnpm --filter @zconsole/console run dev",
+    "dev:events": "pnpm --filter @zconsole/events run dev",
+    "dev:party-pics": "pnpm --filter @zconsole/party-pics run dev",
+    "build": "pnpm --filter \"./apps/*\" run build",
+    "typecheck": "pnpm --filter \"./apps/*\" exec tsc -b",
+    "clean": "pnpm --filter \"./apps/*\" exec rm -rf client/dist shared/dist"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.3"
+  }
+}

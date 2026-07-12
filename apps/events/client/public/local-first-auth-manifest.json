@@ -1,0 +1,9 @@
+{
+  "name": "Zconsole Events Mini App",
+  "description": "A Zconsole Events Mini App mini app",
+  "icon": "./icon.webp",
+  "type": "app",
+  "permissions": [
+    "profile"
+  ]
+}

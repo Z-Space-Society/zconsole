@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%antler-icon.webp" />
+    <link rel="local-first-auth-manifest" href="%BASE_URL%local-first-auth-manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Z-Space · Events</title>
+    <script>
+      // Dynamically generate Smart App Banner with current page URL
+      (function() {
+        // Get current page URL
+        const currentUrl = window.location.href;
+
+        // URL-encode the current URL
+        const encodedUrl = encodeURIComponent(currentUrl);
+
+        // Create meta tag
+        const meta = document.createElement('meta');
+        meta.name = 'apple-itunes-app';
+        meta.content = `app-id=6753969350, app-argument=https://antlerbrowser.com/open/${encodedUrl}`;
+
+        // Add to head
+        document.head.appendChild(meta);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

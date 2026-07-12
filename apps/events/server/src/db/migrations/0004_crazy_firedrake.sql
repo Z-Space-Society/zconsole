@@ -1,0 +1,1 @@
+ALTER TABLE `events` ADD `source` text DEFAULT 'feed' NOT NULL;

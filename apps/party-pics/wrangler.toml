@@ -1,0 +1,40 @@
+# This is used in development only (Alchemy is used for production deployments)
+
+name = "zconsole-party-pics-mini-app-dev"
+main = "server/src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "zconsole-party-pics-mini-app-dev-db"
+database_id = "local"
+
+# Durable Object binding
+[[durable_objects.bindings]]
+name = "DURABLE_OBJECT"
+class_name = "Broadcaster"
+script_name = "zconsole-party-pics-mini-app-dev"
+
+# Durable Object migration
+[[migrations]]
+tag = "v1"
+new_classes = ["Broadcaster"]
+
+# R2 photo storage (accessed via the S3 API with presigned URLs, not a binding).
+# Non-secret values live here; R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY go in .dev.vars.
+# R2_BUCKET_NAME must match the dev bucket you created in the Cloudflare dashboard.
+[vars]
+R2_ACCOUNT_ID = "b967d6c3d917da3107d62c43c59c2614"
+R2_BUCKET_NAME = "party-pics-dev"
+
+# Static assets (client build)
+# In dev: Vite serves client at :5173 (this is unused)
+# In production: Alchemy uploads these assets to Workers
+# [site]
+# bucket = "./client/dist"
+
+# Dev server configuration
+[dev]
+port = 8789
