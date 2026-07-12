@@ -10,9 +10,13 @@ import {
   type SocialLink,
 } from 'local-first-auth/react'
 import { decodeJWT, type LocalFirstAuth } from 'local-first-auth'
+import { ImportProfile, ExportProfile } from 'local-first-auth-import-export/react'
 import { Link } from 'react-router-dom'
 import { AdminSection } from '../components/admin/AdminSection'
 import { syncProfileToDatabase } from '../lib/userApi'
+
+/** Theme the import/export components to match `--color-primary` in index.css. */
+const authStyles = { primaryColor: '#403B51' }
 
 /** The Local First Auth host bridge, once injected onto `window` (or undefined). */
 function hostApi(): LocalFirstAuth | undefined {
@@ -80,7 +84,7 @@ export function Settings() {
  * Profile — one view for web and native; only editing differs.
  * ------------------------------------------------------------------------- */
 
-type Mode = 'view' | 'edit' | 'create'
+type Mode = 'view' | 'edit' | 'create' | 'import' | 'export'
 
 /** Pull a directly-displayable avatar out of getAvatar()'s signed JWT (spec §getAvatar). */
 function extractAvatar(raw: string | null): string | null {
@@ -98,8 +102,13 @@ function extractAvatar(raw: string | null): string | null {
  * The user's own profile. The profile is read the same way for web and native — both the web
  * mock and a native host implement `getProfileDetails()` + `getAvatar()` — so only editing
  * differs:
- *  - `editable` (web): create / edit / log out against the localStorage profile.
+ *  - `editable` (web): create / edit / import / export / log out against the localStorage profile.
  *  - read-only (native): the profile is owned by the host (Antler); view + Done only.
+ *
+ * Import and export are deliberately mutually exclusive: import is offered only when there is
+ * no profile, so it can never overwrite live keys. Both are web-only — in a native host the
+ * profile lives in the app (nothing to export), and importing would inject a web
+ * `window.localFirstAuth` over the host's own bridge.
  */
 function ProfileSection({ editable }: { editable: boolean }) {
   const [profile, setProfile] = useState<{ name: string; socials?: SocialLink[] } | null>(null)
@@ -166,6 +175,41 @@ function ProfileSection({ editable }: { editable: boolean }) {
     )
   }
 
+  // Restore an existing identity from a backup file. Only reachable with no local profile,
+  // so the import can never overwrite live keys.
+  if (mode === 'import') {
+    return (
+      <div className="card p-6 sm:p-8">
+        <ImportProfile
+          customStyles={authStyles}
+          onComplete={() => {
+            setMode('view')
+            void syncProfileToDatabase() // register the restored DID in the host DB
+            void load()
+          }}
+          onBack={() => setMode('view')}
+        />
+      </div>
+    )
+  }
+
+  // Download the profile (DID + keypair) as a portable file. ExportProfile has no onBack.
+  if (mode === 'export') {
+    return (
+      <div className="card p-6 sm:p-8">
+        <ExportProfile customStyles={authStyles} />
+        <div className="flex justify-center">
+          <button
+            onClick={() => setMode('view')}
+            className="rounded-full px-6 py-2.5 font-semibold text-gray-700 hover:bg-gray-100"
+          >
+            Back
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   // Editable (web) user who hasn't created a profile yet.
   if (editable && !profile) {
     return (
@@ -174,6 +218,15 @@ function ProfileSection({ editable }: { editable: boolean }) {
         <button onClick={() => setMode('create')} className="btn-primary mt-5 px-6 py-2.5">
           Create your profile
         </button>
+        <p className="mt-4 text-sm text-gray-500">
+          Already have a profile?{' '}
+          <button
+            onClick={() => setMode('import')}
+            className="text-primary hover:text-primary-hover font-semibold underline"
+          >
+            Import it
+          </button>
+        </p>
       </div>
     )
   }
@@ -188,15 +241,26 @@ function ProfileSection({ editable }: { editable: boolean }) {
           avatar={avatar}
           action={
             editable ? (
-              <button
-                onClick={() => setMode('edit')}
-                className="flex w-full items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 transition-colors hover:bg-gray-50 sm:px-8"
-              >
-                <span>Edit profile</span>
-                <span aria-hidden="true" className="text-xl text-gray-400">
-                  →
-                </span>
-              </button>
+              <>
+                <button
+                  onClick={() => setMode('edit')}
+                  className="flex w-full items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 transition-colors hover:bg-gray-50 sm:px-8"
+                >
+                  <span>Edit profile</span>
+                  <span aria-hidden="true" className="text-xl text-gray-400">
+                    →
+                  </span>
+                </button>
+                <button
+                  onClick={() => setMode('export')}
+                  className="flex w-full items-center justify-between border-t border-gray-200 px-6 py-4 text-left font-semibold text-gray-900 transition-colors hover:bg-gray-50 sm:px-8"
+                >
+                  <span>Export profile</span>
+                  <span aria-hidden="true" className="text-xl text-gray-400">
+                    →
+                  </span>
+                </button>
+              </>
             ) : undefined
           }
         />
