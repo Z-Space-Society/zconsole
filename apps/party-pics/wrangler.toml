@@ -22,12 +22,19 @@ script_name = "zconsole-party-pics-mini-app-dev"
 tag = "v1"
 new_classes = ["Broadcaster"]
 
-# R2 photo storage (accessed via the S3 API with presigned URLs, not a binding).
-# Non-secret values live here; R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY go in .dev.vars.
-# R2_BUCKET_NAME must match the dev bucket you created in the Cloudflare dashboard.
+# Values the Worker needs from `.env`. In local dev, wrangler dev loads ONLY these
+# keys from `.env` into c.env, keeping deploy creds (ALCHEMY_STATE_TOKEN etc.) out of
+# the app runtime. Missing keys log a warning; dev stays runnable. NEVER create a
+# .dev.vars file — its presence makes wrangler dev ignore .env entirely. In
+# production these are bound in alchemy.run.ts (see docs/secrets.md). All four are
+# env-invariant: one remote R2 bucket serves both dev and prod.
+[secrets]
+required = ["R2_ACCOUNT_ID", "R2_BUCKET_NAME", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY"]
+
+# Origins the Worker accepts Local First Auth JWTs for (dev: the Vite client and the
+# wrangler dev server). Production is set via alchemy.run.ts.
 [vars]
-R2_ACCOUNT_ID = "b967d6c3d917da3107d62c43c59c2614"
-R2_BUCKET_NAME = "party-pics-dev"
+ALLOWED_ORIGINS = "http://localhost:5175,http://localhost:8789"
 
 # Static assets (client build)
 # In dev: Vite serves client at :5173 (this is unused)

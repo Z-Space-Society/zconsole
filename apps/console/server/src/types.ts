@@ -17,4 +17,11 @@ import type { ChildBindingKey } from '@zconsole/console-shared'
 export type Env = {
   /** Host's own D1 — stores the operator allowlist (`users.is_admin`) that gates the console. */
   DB: D1Database
+
+  /**
+   * Comma-separated origins this Worker accepts Local First Auth JWTs for.
+   * local-first-auth v3 signs with a per-origin key, so a JWT minted at another
+   * origin carries a different DID — reject it (see shared/src/jwt.ts).
+   */
+  ALLOWED_ORIGINS?: string
 } & Record<ChildBindingKey, D1Database>

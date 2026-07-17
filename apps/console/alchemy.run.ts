@@ -76,6 +76,12 @@ export const worker = await Worker('worker', {
     ASSETS: staticAssets,
     DB: database,
     ...managedDbBindings,
+    // Origins we accept Local First Auth JWTs for. All apps are path-routed on one
+    // origin, so the per-origin DID is identical across console/events/party-pics.
+    // Committed literal on purpose — never read this from .env (alchemy deploy loads
+    // .env, so a local deploy would push localhost origins to prod). Dev values live
+    // in wrangler.toml [vars]. See docs/secrets.md.
+    ALLOWED_ORIGINS: 'https://console.z-space.ca',
   },
   assets: {
     html_handling: 'auto-trailing-slash',

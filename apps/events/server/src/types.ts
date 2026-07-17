@@ -1,10 +1,4 @@
 /**
- * A Cloudflare Secrets Store secret binding, resolved via an async `.get()`.
- * This is the runtime shape of a `secrets_store_secret` binding in production.
- */
-export type SecretsStoreSecret = { get(): Promise<string> }
-
-/**
  * Cloudflare Workers environment bindings
  */
 export interface Env {
@@ -18,9 +12,13 @@ export interface Env {
   ASSETS: Fetcher
 
   // Google Calendar iCal (.ics) URL for syncing private events (source='gcal').
-  // Two runtime shapes (resolve via getGcalIcsUrl in lib/env.ts):
-  //  - Production: a Cloudflare Secrets Store binding (async `.get()`).
-  //  - Local dev:  a plain string loaded from `.env` (gated by secrets.required
-  //    in wrangler.toml). See docs/secrets.md. Optional — sync no-ops when unset.
-  GCAL_ICS_URL?: string | SecretsStoreSecret
+  // Dev: plain string from `.env` (gated by [secrets] required in wrangler.toml).
+  // Prod: Worker secret bound via alchemy.secret.env in alchemy.run.ts.
+  // See docs/secrets.md. Optional — sync no-ops when unset in local dev.
+  GCAL_ICS_URL?: string
+
+  // Comma-separated origins this Worker accepts Local First Auth JWTs for.
+  // local-first-auth v3 signs with a per-origin key, so a JWT minted at another
+  // origin carries a different DID — reject it (see shared/src/jwt.ts).
+  ALLOWED_ORIGINS?: string
 }

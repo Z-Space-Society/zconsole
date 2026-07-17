@@ -32,9 +32,14 @@ new_classes = ["Broadcaster"]
 # In local dev, wrangler loads ONLY these keys from `.env` into the Worker env
 # (c.env) — keeping deploy/infra creds (ALCHEMY_STATE_TOKEN, CLOUDFLARE_ACCOUNT_ID,
 # ALCHEMY_STAGE) out of the app runtime. Missing keys log a warning. In production
-# the value comes from the Cloudflare Secrets Store (see alchemy.run.ts / docs/secrets.md).
+# these are Worker secrets bound in alchemy.run.ts (see docs/secrets.md).
 [secrets]
 required = ["GCAL_ICS_URL"]
+
+# Origins the Worker accepts Local First Auth JWTs for (dev: the Vite client and
+# the wrangler dev server). Production is set via alchemy.run.ts.
+[vars]
+ALLOWED_ORIGINS = "http://localhost:5174,http://localhost:8788"
 
 # Dev server configuration
 [dev]

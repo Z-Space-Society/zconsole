@@ -45,6 +45,17 @@ pnpm --filter @zconsole/events run db:generate-migrations
 pnpm --filter @zconsole/events run deploy:cloudflare
 ```
 
+## Secrets & env vars
+
+Every app follows one convention, sorted by one question — does the value differ
+between local dev and prod? Same-everywhere values (secrets and non-secrets) live in
+`.env`, read by the wrangler `[secrets]` gate in dev and `alchemy.(secret.)env`
+bindings at deploy; environment-differing values are committed literals (dev in
+`wrangler.toml [vars]`, prod in `alchemy.run.ts`); infra creds stay in `.env` and are
+never bound to the Worker. The canonical doc is
+[`templates/mini-app-starter/docs/secrets.md`](templates/mini-app-starter/docs/secrets.md);
+each app's `docs/secrets.md` applies it to that app.
+
 ## Adding a mini app
 
 ```bash

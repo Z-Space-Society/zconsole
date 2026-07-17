@@ -29,6 +29,11 @@ database_id = "REPLACE_WITH_EVENTS_DB_ID"
 # In dev: Vite serves the client at :5173 (this is unused).
 # In production: Alchemy uploads ./client/dist to Workers Assets.
 
+# Origins the Worker accepts Local First Auth JWTs for (dev: the Vite client and
+# the wrangler dev server). Production is set via alchemy.run.ts.
+[vars]
+ALLOWED_ORIGINS = "http://localhost:5173,http://localhost:8787"
+
 # Dev server configuration
 [dev]
 port = 8787

@@ -14,6 +14,10 @@ import type { Broadcaster } from './server/src/durable-object'
 
 // Initialize Alchemy app with remote state store
 const app = await alchemy('zconsole-party-pics-mini-app', {
+  // Encryption key Alchemy uses to encrypt secrets (the R2 keys) before persisting
+  // them to the state store. Required — a deploy with any alchemy.secret binding
+  // aborts without it. Keep it stable across deploys.
+  password: process.env.ALCHEMY_PASSWORD,
   stateStore: (scope) => new CloudflareStateStore(scope),
 })
 
@@ -56,11 +60,18 @@ export const worker = await Worker('worker', {
     DURABLE_OBJECT: durableObject,
     ASSETS: staticAssets,
     // R2 photo storage — accessed via the S3 API with presigned URLs (no R2 binding).
-    // R2_BUCKET_NAME must match the prod bucket created in the Cloudflare dashboard.
-    R2_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID ?? '',
-    R2_BUCKET_NAME: process.env.R2_BUCKET_NAME ?? 'party-pics',
-    R2_ACCESS_KEY_ID: alchemy.secret(process.env.R2_ACCESS_KEY_ID),
-    R2_SECRET_ACCESS_KEY: alchemy.secret(process.env.R2_SECRET_ACCESS_KEY),
+    // All four values are env-invariant (one remote bucket serves dev and prod) and
+    // live in .env: local dev gets them via [secrets] required in wrangler.toml, and
+    // alchemy.env / alchemy.secret.env throw at deploy time if one is unset.
+    R2_ACCOUNT_ID: alchemy.env.R2_ACCOUNT_ID,
+    R2_BUCKET_NAME: alchemy.env.R2_BUCKET_NAME,
+    R2_ACCESS_KEY_ID: alchemy.secret.env.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY: alchemy.secret.env.R2_SECRET_ACCESS_KEY,
+    // Origins we accept Local First Auth JWTs for. All apps are path-routed on one
+    // origin, so the per-origin DID is identical across console/events/party-pics.
+    // Committed literal on purpose — never read this from .env (alchemy deploy loads
+    // .env, so a local deploy would push localhost origins to prod). See docs/secrets.md.
+    ALLOWED_ORIGINS: 'https://console.z-space.ca',
   },
   assets: {
     html_handling: 'auto-trailing-slash',

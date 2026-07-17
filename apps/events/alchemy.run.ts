@@ -8,7 +8,7 @@
  */
 
 import alchemy from 'alchemy'
-import { Assets, D1Database, DurableObjectNamespace, SecretRef, SecretsStore, Worker } from 'alchemy/cloudflare'
+import { Assets, D1Database, DurableObjectNamespace, Worker } from 'alchemy/cloudflare'
 import { CloudflareStateStore } from 'alchemy/state'
 import type { Broadcaster } from './server/src/durable-object'
 
@@ -48,23 +48,6 @@ const durableObject = DurableObjectNamespace<Broadcaster>(`${app.name}-${app.sta
 })
 
 /**
- * Google Calendar iCal (.ics) feed for syncing private events (source='gcal').
- *
- */
-const secretsStore = await SecretsStore(`${app.name}-secrets`, {
-  name: `${app.name}-${app.stage}-secrets`,
-  adopt: true,
-  secrets: {
-    GCAL_ICS_URL: alchemy.secret.env.GCAL_ICS_URL,
-  },
-})
-
-const gcalIcsUrlRef = await SecretRef({
-  name: 'GCAL_ICS_URL',
-  store: secretsStore as unknown as SecretsStore,
-})
-
-/**
  * Cloudflare Worker
  * Handles API routes, WebSocket upgrades, and serves static client assets
  */
@@ -75,7 +58,16 @@ export const worker = await Worker('worker', {
     DB: database,
     DURABLE_OBJECT: durableObject,
     ASSETS: staticAssets,
-    GCAL_ICS_URL: gcalIcsUrlRef,
+    // Google Calendar iCal (.ics) feed for syncing private events (source='gcal').
+    // The private URL variant embeds a token, so it's a runtime secret — bound as a
+    // Worker secret (secret_text). alchemy.secret.env throws at deploy time if the
+    // var is missing from .env, so a deploy fails loud instead of shipping without it.
+    GCAL_ICS_URL: alchemy.secret.env.GCAL_ICS_URL,
+    // Origins we accept Local First Auth JWTs for. All apps are path-routed on one
+    // origin, so the per-origin DID is identical across console/events/party-pics.
+    // Committed literal on purpose — never read this from .env (alchemy deploy loads
+    // .env, so a local deploy would push localhost origins to prod). See docs/secrets.md.
+    ALLOWED_ORIGINS: 'https://console.z-space.ca',
   },
   assets: {
     html_handling: 'auto-trailing-slash',

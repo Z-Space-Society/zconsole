@@ -63,6 +63,7 @@ This is a pnpm workspace monorepo with three packages:
   - `mini-app-examples.md` - Reference examples and links to other mini apps
   - `admin-setup.md` - Admin setup instructions
   - `port-troubleshooting.md` - Port troubleshooting instructions
+  - `secrets.md` - The canonical secrets/env-var convention: three buckets, the `[secrets]` gate, `alchemy.secret.env` bindings
 - `/scripts/` - Helper scripts
   - `setup.ts` - Project setup script (renames template to your app name)
   - `build-client-if-missing.ts` - Builds client if dist doesn't exist (runs before dev via predev hook)

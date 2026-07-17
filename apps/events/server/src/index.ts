@@ -14,7 +14,6 @@ import { createDb } from './db/client'
 import * as UserModel from './db/models/users'
 import * as EventModel from './db/models/events'
 import { parseLumaInput, fetchLumaEvent } from './lib/luma'
-import { getGcalIcsUrl } from './lib/env'
 import {
   decodeAndVerifyJWT,
   partsOf,
@@ -30,6 +29,21 @@ import {
 // Served under the /events subpath (Cloudflare route: console.z-space.ca/events/*),
 // so every route is mounted under /events.
 const app = new Hono<{ Bindings: Env }>().basePath('/events')
+
+/**
+ * Origins this Worker accepts Local First Auth JWTs for, from the ALLOWED_ORIGINS binding.
+ * Empty (unset) means the audience check is skipped.
+ */
+const allowedOrigins = (env: Env): string[] =>
+  env.ALLOWED_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) ?? []
+
+/**
+ * Verify a Local First Auth JWT and enforce that it was minted for one of our origins.
+ * local-first-auth signs with a per-origin key, so a JWT issued at another origin carries
+ * a different DID and would silently create a duplicate user row.
+ */
+const verifyJwt = (c: Context<{ Bindings: Env }>, jwt: string) =>
+  decodeAndVerifyJWT(jwt, allowedOrigins(c.env))
 
 // Enable CORS for all requests
 app.use('/*', cors({
@@ -51,11 +65,14 @@ app.post('/api/add-user', async (c) => {
     }
 
     // Verify and decode the profile JWT
-    const profilePayload = await decodeAndVerifyJWT(profileJwt)
+    const profilePayload = await verifyJwt(c, profileJwt)
+
+    // Key the user off the cryptographically verified DID (not data.did, which the
+    // caller can set to anyone's DID and would let them overwrite that user's row)
+    const did = profilePayload.iss
 
     // Extract profile data
-    const { did, name, socials } = profilePayload.data as {
-      did: string
+    const { name, socials } = profilePayload.data as {
       name: string
       socials?: Array<{ platform: string; handle: string }>
     }
@@ -96,7 +113,7 @@ app.post('/api/add-avatar', async (c) => {
     }
 
     // Verify and decode the avatar JWT
-    const avatarPayload = await decodeAndVerifyJWT(avatarJwt)
+    const avatarPayload = await verifyJwt(c, avatarJwt)
 
     // Extract DID from issuer and avatar from data
     const did = avatarPayload.iss
@@ -137,7 +154,7 @@ app.delete('/api/remove-user', async (c) => {
     }
 
     // Verify and decode the JWT to get the user's DID
-    const payload = await decodeAndVerifyJWT(profileJwt)
+    const payload = await verifyJwt(c, profileJwt)
     const did = payload.iss
 
     // Create database instance and delete user
@@ -192,7 +209,7 @@ app.post('/api/reset', async (c) => {
     }
 
     // Verify and decode the JWT to get the user's DID
-    const payload = await decodeAndVerifyJWT(profileJwt)
+    const payload = await verifyJwt(c, profileJwt)
     const did = payload.iss
 
     // Check if user is admin
@@ -236,7 +253,7 @@ app.post('/api/events/add', async (c) => {
     }
 
     // Verify JWT and confirm the user is an admin.
-    const payload = await decodeAndVerifyJWT(profileJwt)
+    const payload = await verifyJwt(c, profileJwt)
     const did = payload.iss
     const db = createDb(c.env.DB)
     if (!(await UserModel.isUserAdmin(db, did))) {
@@ -285,7 +302,7 @@ app.delete('/api/events/:uid', async (c) => {
       return c.json({ error: 'Missing profileJwt' }, 400)
     }
 
-    const payload = await decodeAndVerifyJWT(profileJwt)
+    const payload = await verifyJwt(c, profileJwt)
     const did = payload.iss
     const db = createDb(c.env.DB)
     if (!(await UserModel.isUserAdmin(db, did))) {
@@ -317,7 +334,7 @@ app.delete('/api/events/:uid', async (c) => {
 app.get('/api/events', async (c) => {
   try {
     const db = createDb(c.env.DB)
-    const gcalIcsUrl = await getGcalIcsUrl(c.env)
+    const gcalIcsUrl = c.env.GCAL_ICS_URL
 
     const [feedChanged, gcalChanged] = await Promise.all([
       EventModel.syncEventsIfStale(db),
@@ -386,7 +403,7 @@ function toTouchDesignerEvent(e: EventModel.Event) {
 app.get('/api/events/touchdesigner', async (c) => {
   try {
     const db = createDb(c.env.DB)
-    const gcalIcsUrl = await getGcalIcsUrl(c.env)
+    const gcalIcsUrl = c.env.GCAL_ICS_URL
 
     const [feedChanged, gcalChanged] = await Promise.all([
       EventModel.syncEventsIfStale(db),

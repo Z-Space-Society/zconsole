@@ -14,6 +14,10 @@ import type { Broadcaster } from './server/src/durable-object'
 
 // Initialize Alchemy app with remote state store
 const app = await alchemy('mini-app-starter', {
+  // Encryption key for secret values persisted to Alchemy state. Only required once
+  // you add an alchemy.secret binding below — set it in .env before you do, and keep
+  // it stable across deploys (changing it orphans previously-encrypted state).
+  password: process.env.ALCHEMY_PASSWORD,
   stateStore: (scope) => new CloudflareStateStore(scope),
 })
 
@@ -55,6 +59,17 @@ export const worker = await Worker('worker', {
     DB: database,
     DURABLE_OBJECT: durableObject,
     ASSETS: staticAssets,
+    // Origins this app accepts Local First Auth JWTs for. Committed literal on
+    // purpose — never read this from .env (alchemy deploy loads .env, so a local
+    // deploy would push localhost origins to prod). Apps hosted under the zconsole
+    // host are path-routed on this one origin; change it if you deploy elsewhere.
+    ALLOWED_ORIGINS: 'https://console.z-space.ca',
+    // Example runtime secret — the full pattern (see docs/secrets.md):
+    //   1. add MY_SECRET= to .env and .env.example
+    //   2. add it to [secrets] required in wrangler.toml (local dev)
+    //   3. bind it here — alchemy.secret.env throws at deploy time if unset in .env
+    //   4. add `MY_SECRET?: string` to server/src/types.ts
+    // MY_SECRET: alchemy.secret.env.MY_SECRET,
   },
   assets: {
     html_handling: 'auto-trailing-slash',

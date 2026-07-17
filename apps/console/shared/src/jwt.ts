@@ -8,7 +8,8 @@ import { ed25519 } from '@noble/curves/ed25519.js';
 import * as base58 from 'base58-universal'
 
 export interface LocalFirstAuthJWTPayload {
-  iss: string; // DID of the user
+  iss: string; // DID of the user (per-origin, derived from their root key)
+  aud?: string; // Origin the JWT was minted for
   iat: number; // Issued at timestamp
   exp: number; // Expiration timestamp
   type: string; // Message type (e.g., 'localFirstAuth:profile:disconnected', 'localFirstAuth:error')
@@ -19,8 +20,17 @@ export interface LocalFirstAuthJWTPayload {
 
 /**
  * Decode and verify a JWT from Local First Auth
+ *
+ * @param jwt - The JWT to verify
+ * @param allowedOrigins - Origins this app accepts JWTs for. Since local-first-auth v3
+ *   signs with a per-origin key, a JWT minted for another origin carries a different DID
+ *   and would create a duplicate user row — so reject it. Omit to skip the check (the
+ *   client decodes its own same-origin JWTs, and the template ships unconfigured).
  */
-export async function decodeAndVerifyJWT(jwt: string): Promise<LocalFirstAuthJWTPayload> {
+export async function decodeAndVerifyJWT(
+  jwt: string,
+  allowedOrigins?: string[],
+): Promise<LocalFirstAuthJWTPayload> {
   try {
     // First decode to get the issuer (DID) and claims
     const decoded = jwtDecode(jwt);
@@ -34,10 +44,12 @@ export async function decodeAndVerifyJWT(jwt: string): Promise<LocalFirstAuthJWT
       throw new Error('JWT expired');
     }
 
-    // check audience claim to ensure this JWT is intended for this application (use in production)
-    // if (decoded.aud && decoded.aud !== 'https://yourdomain.com') {
-    //   throw new Error(`This JWT is not intended for this application. aud received: ${decoded.aud}`);
-    // }
+    // check audience claim to ensure this JWT is intended for this application
+    if (allowedOrigins?.length) {
+      if (!decoded.aud || !allowedOrigins.includes(decoded.aud as string)) {
+        throw new Error(`This JWT is not intended for this application. aud received: ${decoded.aud}`);
+      }
+    }
 
     // Extract public key bytes from DID
     const publicKeyBytes = extractPublicKeyFromDID(decoded.iss);

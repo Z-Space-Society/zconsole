@@ -28,6 +28,19 @@ new_classes = ["Broadcaster"]
 # [site]
 # bucket = "./client/dist"
 
+# Secrets required by the Worker (uncomment when you add your first secret).
+# In local dev, wrangler dev loads ONLY these keys from `.env` into c.env,
+# keeping deploy creds (ALCHEMY_STATE_TOKEN etc.) out of the app runtime.
+# Missing keys log a warning; dev stays runnable. NEVER create a .dev.vars
+# file — its presence makes wrangler dev ignore .env entirely.
+# [secrets]
+# required = ["MY_SECRET"]
+
+# Origins the Worker accepts Local First Auth JWTs for (dev: the Vite client and the
+# wrangler dev server). Set your deployed origin in alchemy.run.ts for production.
+[vars]
+ALLOWED_ORIGINS = "http://localhost:5173,http://localhost:8787"
+
 # Dev server configuration
 [dev]
 port = 8787

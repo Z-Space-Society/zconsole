@@ -23,6 +23,21 @@ import { decodeAndVerifyJWT } from '@zconsole/console-shared'
 
 const app = new Hono<{ Bindings: Env }>()
 
+/**
+ * Origins this Worker accepts Local First Auth JWTs for, from the ALLOWED_ORIGINS binding.
+ * Empty (unset) means the audience check is skipped.
+ */
+const allowedOrigins = (env: Env): string[] =>
+  env.ALLOWED_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) ?? []
+
+/**
+ * Verify a Local First Auth JWT and enforce that it was minted for one of our origins.
+ * local-first-auth signs with a per-origin key, so a JWT issued at another origin carries
+ * a different DID and would silently create a duplicate user row.
+ */
+const verifyJwt = (c: Context<{ Bindings: Env }>, jwt: string) =>
+  decodeAndVerifyJWT(jwt, allowedOrigins(c.env))
+
 app.use('/*', cors({ origin: '*' }))
 
 /**
@@ -40,7 +55,7 @@ app.post('/api/add-user', async (c) => {
     const { profileJwt } = await c.req.json<{ profileJwt?: string }>()
     if (!profileJwt) return c.json({ error: 'Missing profileJwt' }, 400)
 
-    const payload = await decodeAndVerifyJWT(profileJwt)
+    const payload = await verifyJwt(c, profileJwt)
     const did = payload.iss // cryptographically verified DID (not data.did)
     const { name, socials } = payload.data as {
       name: string
@@ -61,7 +76,7 @@ app.post('/api/add-avatar', async (c) => {
     const { avatarJwt } = await c.req.json<{ avatarJwt?: string }>()
     if (!avatarJwt) return c.json({ error: 'Missing avatarJwt' }, 400)
 
-    const payload = await decodeAndVerifyJWT(avatarJwt)
+    const payload = await verifyJwt(c, avatarJwt)
     const did = payload.iss
     const { avatar } = payload.data as { avatar: string }
     if (!avatar) return c.json({ error: 'No avatar data in JWT' }, 400)
@@ -100,7 +115,7 @@ async function requireHostAdmin(
   if (!jwt) return c.json({ error: 'Unauthorized' }, 401)
   let did: string
   try {
-    did = (await decodeAndVerifyJWT(jwt)).iss
+    did = (await verifyJwt(c, jwt)).iss
   } catch (err) {
     return c.json({ error: 'Invalid token', message: (err as Error).message }, 401)
   }
@@ -141,7 +156,7 @@ app.get('/api/admin/status', async (c) => {
   const jwt = c.req.header('Authorization')?.replace('Bearer ', '')
   if (!jwt) return c.json({ isAdmin: false })
   try {
-    const { iss } = await decodeAndVerifyJWT(jwt)
+    const { iss } = await verifyJwt(c, jwt)
     return c.json({ isAdmin: await isHostAdmin(c.env, iss) })
   } catch {
     return c.json({ isAdmin: false })

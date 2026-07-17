@@ -61,11 +61,11 @@ importers:
         specifier: workspace:*
         version: link:../shared
       local-first-auth:
-        specifier: ^2.3.0
-        version: 2.3.0(react@19.2.7)
+        specifier: ^3.0.1
+        version: 3.0.1(react@19.2.7)
       local-first-auth-import-export:
-        specifier: ^0.1.0
-        version: 0.1.0(react@19.2.7)
+        specifier: ^1.0.0
+        version: 1.0.0(react@19.2.7)
       qrcode.react:
         specifier: ^4.2.0
         version: 4.2.0(react@19.2.7)
@@ -98,8 +98,8 @@ importers:
         specifier: ^10.4.22
         version: 10.5.2(postcss@8.5.17)
       local-first-auth-simulator:
-        specifier: ^1.4.1
-        version: 1.5.0
+        specifier: ^2.0.0
+        version: 2.0.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.17
@@ -184,8 +184,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       local-first-auth:
-        specifier: ^2.1.0
-        version: 2.3.0(react@19.2.7)
+        specifier: ^3.0.1
+        version: 3.0.1(react@19.2.7)
       qrcode.react:
         specifier: ^4.2.0
         version: 4.2.0(react@19.2.7)
@@ -218,8 +218,8 @@ importers:
         specifier: ^10.4.22
         version: 10.5.2(postcss@8.5.17)
       local-first-auth-simulator:
-        specifier: ^1.4.1
-        version: 1.5.0
+        specifier: ^2.0.0
+        version: 2.0.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.17
@@ -307,8 +307,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       local-first-auth:
-        specifier: ^2.1.0
-        version: 2.3.0(react@19.2.7)
+        specifier: ^3.0.1
+        version: 3.0.1(react@19.2.7)
       qrcode.react:
         specifier: ^4.2.0
         version: 4.2.0(react@19.2.7)
@@ -341,8 +341,8 @@ importers:
         specifier: ^10.4.22
         version: 10.5.2(postcss@8.5.17)
       local-first-auth-simulator:
-        specifier: ^1.4.1
-        version: 1.5.0
+        specifier: ^2.0.0
+        version: 2.0.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.17
@@ -1482,17 +1482,29 @@ packages:
   '@stablelib/binary@1.0.1':
     resolution: {integrity: sha512-ClJWvmL6UBM/wjkvv/7m5VP3GMr9t0osr4yVgLZsLCOz4hGN9gIAFEqnJ0TsSMAN+n840nf2cHZnA5/KFqHC7Q==}
 
+  '@stablelib/constant-time@1.0.1':
+    resolution: {integrity: sha512-tNOs3uD0vSJcK6z1fvef4Y+buN7DXhzHDPqRLSXUel1UfqMB1PWNsnnAezrKfEwTLpN0cGH2p9NNjs6IqeD0eg==}
+
   '@stablelib/ed25519@1.0.3':
     resolution: {integrity: sha512-puIMWaX9QlRsbhxfDc5i+mNPMY+0TmQEskunY1rZEBPi1acBCVQAhnsk/1Hk50DGPtVsZtAWQg4NHGlVaO9Hqg==}
 
   '@stablelib/hash@1.0.1':
     resolution: {integrity: sha512-eTPJc/stDkdtOcrNMZ6mcMK1e6yBbqRBaNW55XA1jU8w/7QdnCF0CmMmOD1m7VSkBR44PWrMHU2l6r8YEQHMgg==}
 
+  '@stablelib/hkdf@1.0.1':
+    resolution: {integrity: sha512-SBEHYE16ZXlHuaW5RcGk533YlBj4grMeg5TooN80W3NpcHRtLZLLXvKyX0qcRFxf+BGDobJLnwkvgEwHIDBR6g==}
+
+  '@stablelib/hmac@1.0.1':
+    resolution: {integrity: sha512-V2APD9NSnhVpV/QMYgCVMIYKiYG6LSqw1S65wxVoirhU/51ACio6D4yDVSwMzuTJXWZoVHbDdINioBwKy5kVmA==}
+
   '@stablelib/int@1.0.1':
     resolution: {integrity: sha512-byr69X/sDtDiIjIV6m4roLVWnNNlRGzsvxw+agj8CIEazqWGOQp2dTYgQhtyVXV9wpO6WyXRQUzLV/JRNumT2w==}
 
   '@stablelib/random@1.0.2':
     resolution: {integrity: sha512-rIsE83Xpb7clHPVRlBj8qNe5L8ISQOzjghYQm/dZ7VaM2KHYwMW5adjQjrzTZCchFnNCNhkwtnOBa9HTMJCI8w==}
+
+  '@stablelib/sha256@1.0.1':
+    resolution: {integrity: sha512-GIIH3e6KH+91FqGV42Kcj71Uefd/QEe7Dy42sBTeqppXV95ggCcxLTk39bEr+lZfJmp+ghsR07J++ORkRELsBQ==}
 
   '@stablelib/sha512@1.0.1':
     resolution: {integrity: sha512-13gl/iawHV9zvDKciLo1fQ8Bgn2Pvf7OV6amaRVKiq3pjQ3UmEpXxWiAfV8tYjUpeZroBxtyrwtdooQT/i3hzw==}
@@ -2207,20 +2219,20 @@ packages:
     resolution: {integrity: sha512-NXYBzinNrblfraPGyrbPoD19C1h9lfI/1mzgWYvXUTe414Gz/X1FD2XBZSZM7rRTrMA8JL3OtAaGifrIKhQ5yQ==}
     engines: {node: '>= 12.0.0'}
 
-  local-first-auth-import-export@0.1.0:
-    resolution: {integrity: sha512-KgPMS9EU7yousYXe+aTfddKHXdrD+ye5bkww/WWuNIFd/xqSK12Acxxslb2DyHPHdRFDnMkyBV54ccnqQPIvew==}
+  local-first-auth-import-export@1.0.0:
+    resolution: {integrity: sha512-hQrzoXMP8a26h/YxZMGiLqdUOW9yRWIlVB6xrbf3gL0AkpQADNTxi7YVcjYD5oBHhNPczKlCb0tM/Rx5mp2kxg==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       react:
         optional: true
 
-  local-first-auth-simulator@1.5.0:
-    resolution: {integrity: sha512-EaZ2nKsK0WVraUI8/BXIpnaUQWgPX4G/weRNC6IBN1Yh4J0hFJ5ab9umdLojBtaE+l47ByRDJJoP2LU+6SeYlg==}
+  local-first-auth-simulator@2.0.0:
+    resolution: {integrity: sha512-AOxMTA5HMw6vH1wjwRxIVkXJzQ7zZN5yyDBrgTys1ptkvORHFhLJD0wcx3RsMxoDUrb/6zQhtAQ2IQoGRgdvkg==}
     engines: {node: '>=20.0.0'}
 
-  local-first-auth@2.3.0:
-    resolution: {integrity: sha512-dK+Ygjs+JrYRWyKBHqJehyJSFOAMZIT2VFqlNAkPP9VEycqz1XCDwUP9S0ZdIlAt9ewuvoCbqF1kOszb4JtTCg==}
+  local-first-auth@3.0.1:
+    resolution: {integrity: sha512-pa1IOmQ6Flc154+W6WmuXiWPVi+nwfIL2qeKvn4tAGGx5L1jrPr6+W3CUP1VwruekyQH5M+JUl1/jHInMpTqyQ==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
@@ -3581,6 +3593,8 @@ snapshots:
     dependencies:
       '@stablelib/int': 1.0.1
 
+  '@stablelib/constant-time@1.0.1': {}
+
   '@stablelib/ed25519@1.0.3':
     dependencies:
       '@stablelib/random': 1.0.2
@@ -3589,11 +3603,29 @@ snapshots:
 
   '@stablelib/hash@1.0.1': {}
 
+  '@stablelib/hkdf@1.0.1':
+    dependencies:
+      '@stablelib/hash': 1.0.1
+      '@stablelib/hmac': 1.0.1
+      '@stablelib/wipe': 1.0.1
+
+  '@stablelib/hmac@1.0.1':
+    dependencies:
+      '@stablelib/constant-time': 1.0.1
+      '@stablelib/hash': 1.0.1
+      '@stablelib/wipe': 1.0.1
+
   '@stablelib/int@1.0.1': {}
 
   '@stablelib/random@1.0.2':
     dependencies:
       '@stablelib/binary': 1.0.1
+      '@stablelib/wipe': 1.0.1
+
+  '@stablelib/sha256@1.0.1':
+    dependencies:
+      '@stablelib/binary': 1.0.1
+      '@stablelib/hash': 1.0.1
       '@stablelib/wipe': 1.0.1
 
   '@stablelib/sha512@1.0.1':
@@ -4194,23 +4226,29 @@ snapshots:
       lightningcss-win32-arm64-msvc: 1.32.0
       lightningcss-win32-x64-msvc: 1.32.0
 
-  local-first-auth-import-export@0.1.0(react@19.2.7):
+  local-first-auth-import-export@1.0.0(react@19.2.7):
     dependencies:
       '@stablelib/ed25519': 1.0.3
+      '@stablelib/hkdf': 1.0.1
+      '@stablelib/sha256': 1.0.1
       base58-universal: 2.0.0
       base64-js: 1.5.1
     optionalDependencies:
       react: 19.2.7
 
-  local-first-auth-simulator@1.5.0:
+  local-first-auth-simulator@2.0.0:
     dependencies:
       '@stablelib/ed25519': 1.0.3
+      '@stablelib/hkdf': 1.0.1
+      '@stablelib/sha256': 1.0.1
       base58-universal: 2.0.0
       base64-js: 1.5.1
 
-  local-first-auth@2.3.0(react@19.2.7):
+  local-first-auth@3.0.1(react@19.2.7):
     dependencies:
       '@stablelib/ed25519': 1.0.3
+      '@stablelib/hkdf': 1.0.1
+      '@stablelib/sha256': 1.0.1
       base58-universal: 2.0.0
       base64-js: 1.5.1
     optionalDependencies:
