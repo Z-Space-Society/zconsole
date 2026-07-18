@@ -26,7 +26,7 @@ export const MANAGED_APPS: ManagedApp[] = [
     slug: 'events',
     bindingKey: 'DB_EVENTS',
     dbName: 'zconsole-events-mini-app-prod-db',
-    databaseId: '50100a65-0bab-4b73-9185-2103f804a07f',
+    databaseId: '79e9555e-beae-46af-944c-0ddeb2511351',
   },
   // photos intentionally omitted — DB not deployed yet. Add it back here (with its real
   // UUID) and restore 'DB_PHOTOS' to ChildBindingKey when the photos app ships.

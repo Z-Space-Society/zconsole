@@ -3,7 +3,7 @@ export function Footer() {
     <div className="mt-4 mb-4 pb-4 text-center text-sm" style={{ color: 'var(--ink-3)' }}>
       This is an {' '}
       <a
-        href="https://github.com/Z-Space-Society/zconsole-events-mini-app"
+        href="https://github.com/Z-Space-Society/zconsole/tree/main/apps/events"
         target="_blank"
         rel="noopener noreferrer"
         className="underline"

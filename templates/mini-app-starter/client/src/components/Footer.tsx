@@ -3,7 +3,7 @@ export function Footer() {
     <div className="mt-4 text-center text-sm text-gray-500">
       This app is an {' '}
       <a
-        href="https://github.com/antler-browser/mini-app-starter"
+        href="https://github.com/Z-Space-Society/zconsole"
         target="_blank"
         rel="noopener noreferrer"
         className="text-rose-700 hover:text-rose-800 underline"
